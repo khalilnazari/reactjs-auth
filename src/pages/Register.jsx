@@ -56,7 +56,7 @@ const Register = () => {
 
     return (
         <div className="flex justify-center items-center h-[80vh]">
-            <div className="bg-gray-100 p-2 xs:p-4 sm:p-8 w-full mx-2 sm:mx-auto sm:max-w-[400px]">
+            <div className="bg-gray-100 p-4 xs:p-4 sm:p-8 w-full mx-4 sm:mx-auto sm:max-w-[400px]">
                 <h2 className="font-bold text-gray-700 text-xl uppercase mb-5">
                     User Registration
                 </h2>
@@ -156,7 +156,7 @@ const Register = () => {
                     <div className="text-right">
                         <span>
                             <Link
-                                to="/login"
+                                to="/"
                                 className="font-medium hover:underline"
                             >
                                 Log in
