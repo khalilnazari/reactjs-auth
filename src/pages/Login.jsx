@@ -1,8 +1,12 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useFormik } from "formik";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import axios from "../api/axios";
+const LOGIN_URL = "/auth";
 
 const Login = () => {
+    const { setAuth } = useAuth();
     const emailRef = useRef();
     const messageRef = useRef();
 
@@ -37,7 +41,25 @@ const Login = () => {
             handleLogin(values);
         },
     });
-    const handleLogin = (e) => {};
+    const handleLogin = (e) => {
+        // console.log(e);
+        try {
+            const response = axios.post(
+                LOGIN_URL,
+                JSON.stringify({ user: e.email, pwd: e.password }),
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                }
+            );
+
+            const accessToken = response?.data?.accessToken;
+            const roles = response?.data?.roles;
+            setAuth({ roles, user, accessToken });
+
+            navigate(from, { replace: true });
+        } catch (error) {}
+    };
     // checking errors
     const isFormFilled = Object.values(formik.values).every((el) => el === "");
     const hasError = Object.keys(formik.errors).length !== 0;

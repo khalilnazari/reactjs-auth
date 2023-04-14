@@ -1,6 +1,8 @@
 import { useFormik } from "formik";
 import React, { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "../api/axios";
+const REGISTER_URL = "/register";
 
 const Register = () => {
     const emailRef = useRef();
@@ -46,9 +48,27 @@ const Register = () => {
         validate,
         onSubmit: (values) => {
             if (Object.keys(values).length === 0) return;
-            submitData(values);
+            registerUser(values);
         },
     });
+
+    const registerUser = async (values) => {
+        try {
+            const response = await axios.post(
+                REGISTER_URL,
+                JSON.stringify({
+                    pwd: values.password,
+                    user: values.email,
+                }),
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                }
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     // checking errors
     const isFormFilled = Object.values(formik.values).every((el) => el === "");
