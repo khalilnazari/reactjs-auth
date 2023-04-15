@@ -10,7 +10,7 @@ const Login = () => {
     const emailRef = useRef();
     const navigate = useNavigate();
     const location = useLocation();
-    const redirectedFrom = location.state.from.pathname || "lounge";
+    const redirectedFrom = location?.state?.from?.pathname || "lounge";
     const [authError, setAuthError] = useState(null);
     const [authLoading, setAuthLoading] = useState(false);
 
