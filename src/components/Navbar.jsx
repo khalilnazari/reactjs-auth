@@ -1,8 +1,17 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import useLogout from "../hooks/useLogout";
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const { auth } = useAuth();
+    const logout = useLogout();
+
+    const handleLogout = () => {
+        navigate("/");
+        logout();
+    };
 
     const handleLogin = () => {
         navigate("/");
@@ -30,9 +39,15 @@ const Navbar = () => {
                 </div>
 
                 <div>
-                    <button className="font-medium" onClick={handleLogin}>
-                        Login
-                    </button>
+                    {auth?.accessToken ? (
+                        <button className="font-medium" onClick={handleLogout}>
+                            Logout
+                        </button>
+                    ) : (
+                        <button className="font-medium" onClick={handleLogin}>
+                            Login
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
