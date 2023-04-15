@@ -12,12 +12,10 @@ import Notfound from "./pages/Notfound";
 import Unauthorized from "./pages/UnAuthorized";
 
 const ROLES = {
-    User: 2001,
-    Editor: 1984,
-    Admin: 5150,
-    Programmer: 7000,
-    Finance: 899,
-    Marketer: 6777,
+    Admin: 2001,
+    Programmer: 9001,
+    Finance: 8001,
+    Marketer: 7001,
 };
 
 function App() {
