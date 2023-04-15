@@ -1,11 +1,14 @@
 import { useFormik } from "formik";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "../api/axios";
 const REGISTER_URL = "/register";
 
 const Register = () => {
     const emailRef = useRef();
+    const [registerError, setRegisterError] = useState(null);
+    const [registerLoading, setRegisterLoading] = useState(false);
+    const [registerSuccess, setRegisterSuccess] = useState(null);
 
     useEffect(() => {
         emailRef.current.focus();
@@ -53,6 +56,7 @@ const Register = () => {
     });
 
     const registerUser = async (values) => {
+        setRegisterLoading(true);
         try {
             const response = await axios.post(
                 REGISTER_URL,
@@ -65,8 +69,22 @@ const Register = () => {
                     withCredentials: true,
                 }
             );
+            setRegisterLoading(false);
+            console.log(response);
+            setRegisterSuccess(
+                "Account is successfully created! Please login."
+            );
+            setRegisterError(null);
         } catch (error) {
-            console.log(error);
+            setRegisterLoading(false);
+            setRegisterSuccess(null);
+            if (!error.response) {
+                setRegisterError("No Server response");
+            } else if (error.response.status === 409) {
+                setRegisterError("A user with this email already exist.");
+            } else {
+                setRegisterError("Regiteration failed. Try again");
+            }
         }
     };
 
@@ -82,6 +100,17 @@ const Register = () => {
                 </h2>
 
                 <form onSubmit={formik.handleSubmit} className="w-full">
+                    {registerError ? (
+                        <div className="bg-red-300 p-2 mb-2">
+                            {registerError}
+                        </div>
+                    ) : null}
+
+                    {registerSuccess ? (
+                        <div className="bg-green-300 p-2 mb-2">
+                            {registerSuccess}
+                        </div>
+                    ) : null}
                     <div className="mb-3">
                         <label
                             className="font-medium text-gray-800"
@@ -169,7 +198,7 @@ const Register = () => {
                             className="w-full bg-gray-700 text-gray-100 p-2 disabled:cursor-not-allowed"
                             disabled={hasError || isFormFilled}
                         >
-                            Submit
+                            {registerLoading ? "Checking..." : "Submit"}
                         </button>
                     </div>
 
