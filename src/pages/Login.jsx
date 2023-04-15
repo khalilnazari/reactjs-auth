@@ -8,7 +8,11 @@ const LOGIN_URL = "/auth";
 const Login = () => {
     const { setAuth } = useAuth();
     const emailRef = useRef();
-    const messageRef = useRef();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const redirectedFrom = location.state.from.pathname || "lounge";
+    const [authError, setAuthError] = useState(null);
+    const [authLoading, setAuthLoading] = useState(false);
 
     useEffect(() => {
         emailRef.current.focus();
@@ -16,7 +20,6 @@ const Login = () => {
 
     const validate = ({ email, password }) => {
         const errors = {};
-
         if (!email) {
             errors.email = "Enter your email address";
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
@@ -41,10 +44,11 @@ const Login = () => {
             handleLogin(values);
         },
     });
-    const handleLogin = (e) => {
-        // console.log(e);
+
+    const handleLogin = async (e) => {
+        setAuthLoading(true);
         try {
-            const response = axios.post(
+            const response = await axios.post(
                 LOGIN_URL,
                 JSON.stringify({ user: e.email, pwd: e.password }),
                 {
@@ -52,13 +56,21 @@ const Login = () => {
                     withCredentials: true,
                 }
             );
-
-            const accessToken = response?.data?.accessToken;
-            const roles = response?.data?.roles;
-            setAuth({ roles, user, accessToken });
-
-            navigate(from, { replace: true });
-        } catch (error) {}
+            setAuth(response.data);
+            navigate(redirectedFrom, { replace: true });
+            setAuthLoading(false);
+        } catch (error) {
+            if (error.response.status === 403) {
+                setAuthError("Invalid credinticals!");
+            } else if (error.response.status === 500) {
+                setAuthError("Server error.");
+            } else {
+                setAuthError(
+                    "An error happened. Please also check your internet connection."
+                );
+            }
+            setAuthLoading(false);
+        }
     };
     // checking errors
     const isFormFilled = Object.values(formik.values).every((el) => el === "");
@@ -72,6 +84,9 @@ const Login = () => {
                 </h2>
 
                 <form onSubmit={formik.handleSubmit} className="w-full">
+                    {authError && (
+                        <div className="p-2 mb-2 bg-red-300">{authError}</div>
+                    )}
                     <div className="mb-1">
                         <label
                             className="font-medium text-gray-800"
@@ -137,9 +152,9 @@ const Login = () => {
                         <button
                             type="submit"
                             className="flex items-center justify-center gap-3 w-full bg-gray-700 text-gray-100 p-2 disabled:cursor-not-allowed"
-                            disabled={isFormFilled || hasError}
+                            disabled={isFormFilled || hasError || authLoading}
                         >
-                            <span>Submit</span>
+                            {authLoading ? "Loading..." : "Submit"}
                         </button>
                     </div>
                 </form>
