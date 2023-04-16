@@ -10,6 +10,8 @@ import Lounge from "./pages/Lounge";
 import RequireAuth from "./pages/RequireAuth";
 import Notfound from "./pages/Notfound";
 import Unauthorized from "./pages/UnAuthorized";
+import PersistLogin from "./components/PersistLogin";
+import useAuth from "./hooks/useAuth";
 
 const ROLES = {
     Admin: 2001,
@@ -19,6 +21,8 @@ const ROLES = {
 };
 
 function App() {
+    const { auth } = useAuth();
+
     return (
         <Routes>
             <Route element={<Layout />}>
@@ -27,42 +31,51 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="unauthorized" element={<Unauthorized />} />
 
-                {/* authorized pages */}
-                <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
-                    <Route path="/admin" element={<Admin />} />
-                </Route>
+                <Route element={<PersistLogin />}>
+                    {/* authorized pages */}
+                    <Route
+                        element={<RequireAuth allowedRoles={[ROLES.Admin]} />}
+                    >
+                        <Route path="/admin" element={<Admin />} />
+                    </Route>
 
-                <Route element={<RequireAuth allowedRoles={[ROLES.Finance]} />}>
-                    <Route path="/finance" element={<Finance />} />
-                </Route>
+                    <Route
+                        element={<RequireAuth allowedRoles={[ROLES.Finance]} />}
+                    >
+                        <Route path="/finance" element={<Finance />} />
+                    </Route>
 
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Programmer]} />}
-                >
-                    <Route path="/programmer" element={<Programmer />} />
-                </Route>
+                    <Route
+                        element={
+                            <RequireAuth allowedRoles={[ROLES.Programmer]} />
+                        }
+                    >
+                        <Route path="/programmer" element={<Programmer />} />
+                    </Route>
 
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Marketer]} />}
-                >
-                    <Route path="/marketer" element={<Marketer />} />
-                </Route>
+                    <Route
+                        element={
+                            <RequireAuth allowedRoles={[ROLES.Marketer]} />
+                        }
+                    >
+                        <Route path="/marketer" element={<Marketer />} />
+                    </Route>
 
-                <Route
-                    element={
-                        <RequireAuth
-                            allowedRoles={[
-                                ROLES.Programmer,
-                                ROLES.Admin,
-                                ROLES.Marketer,
-                                ROLES.Finance,
-                            ]}
-                        />
-                    }
-                >
-                    <Route path="/lounge" element={<Lounge />} />
+                    <Route
+                        element={
+                            <RequireAuth
+                                allowedRoles={[
+                                    ROLES.Programmer,
+                                    ROLES.Admin,
+                                    ROLES.Marketer,
+                                    ROLES.Finance,
+                                ]}
+                            />
+                        }
+                    >
+                        <Route path="/lounge" element={<Lounge />} />
+                    </Route>
                 </Route>
-
                 {/* not found pages */}
                 <Route path="*" element={<Notfound />} />
             </Route>
