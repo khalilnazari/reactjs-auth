@@ -7,7 +7,7 @@ import FullPageLoading from "./FullPageLoading";
 const PersistLogin = () => {
     const refresh = useRefereshToken();
 
-    const { auth } = useAuth();
+    const { auth, persistAuth } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -31,7 +31,7 @@ const PersistLogin = () => {
 
     return (
         <>
-            {auth?.accessToken ? (
+            {!persistAuth && auth?.accessToken ? (
                 <Outlet />
             ) : isLoading ? (
                 <FullPageLoading />

@@ -6,7 +6,7 @@ import axios from "../api/axios";
 const LOGIN_URL = "/auth";
 
 const Login = () => {
-    const { setAuth } = useAuth();
+    const { setAuth, setPersistAuth, persistAuth } = useAuth();
     const emailRef = useRef();
     const navigate = useNavigate();
     const location = useLocation();
@@ -126,7 +126,7 @@ const Login = () => {
                             Password
                         </label>
 
-                        <div className="relative mb-1">
+                        <div className="relative">
                             <input
                                 type="password"
                                 name="password"
@@ -138,14 +138,26 @@ const Login = () => {
                             />
                         </div>
                         {formik.errors.password && formik.touched.password ? (
-                            <div className="font-thin text-sm text-red-700">
+                            <span className="font-thin text-sm text-red-700">
                                 {formik.errors.password}
-                            </div>
+                            </span>
                         ) : (
                             <span className="font-thin text-sm text-transparent">
                                 no error
                             </span>
                         )}
+                    </div>
+
+                    <div className="mb-5">
+                        <input
+                            type="checkbox"
+                            onChange={() => setPersistAuth((prev) => !prev)}
+                            checked={persistAuth}
+                            id="trustDevice"
+                        />
+                        <label htmlFor="trustDevice" className="ml-2">
+                            Trust this device
+                        </label>
                     </div>
 
                     <div className="mb-3">
